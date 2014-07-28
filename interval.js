@@ -37,7 +37,7 @@ var Interval = construct({
       prom = new Promise(that),
       inter = new Interval(prom.bindNotify(), time);
 
-      prom.always(function () {
+      prom.settled(function () {
         inter.suspend();
       });
 

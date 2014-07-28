@@ -46,9 +46,9 @@ Promise()
     rejected: Boolean
 
     then(onFulfilled, onRejected) -> Promise
+    failed(handler) -> Promise
+    settled(handler) -> Promise
     notified(onNotified) -> this
-    fail(onRejected) -> Promise
-    always(handler) -> Promise
 
     resolve(value)
     fulfill(value) -> Boolean
@@ -67,9 +67,9 @@ Promise()
 ## legio-async/interval
 ```javascript
 Interval(fn, time, wrap: Boolean)
-  start(time, immediately: Boolean) -> Promise
+  start(time, immediately = false) -> Promise
   prototype
-    activate(immediately: Boolean, time)
+    activate(immediately = false, time)
     suspend()
 ```
 

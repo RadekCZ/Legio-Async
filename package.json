@@ -10,12 +10,12 @@
   "licence": "LGPL",
   "repository": {
     "type": "git",
-    "url": "https://github.com/RadekCZ/Legio.git"
+    "url": "https://github.com/RadekCZ/Legio-Async.git"
   },
   "main": "./index",
   "bin": {},
   "dependencies": {
-    "legio": "0.3.0",
+    "legio": "0.3.x",
     "setimmediate": "1.0.2"
   },
   "engines": {

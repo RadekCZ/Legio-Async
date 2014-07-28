@@ -1,6 +1,6 @@
 'use strict';
 var
-Legio = require("../std"),
+Legio = require("legio"),
 Promise = require("./promise");
 
 var Async = {
