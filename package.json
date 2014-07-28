@@ -1,0 +1,24 @@
+{
+  "name": "legio-async",
+  "version": "0.0.1",
+  "description": "Tools for asynchronous programming",
+  "author": {
+    "name": "Radomír Žemlička",
+    "email": "info@razem.cz",
+    "url": "http://razem.cz"
+  },
+  "licence": "LGPL",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RadekCZ/Legio.git"
+  },
+  "main": "./index",
+  "bin": {},
+  "dependencies": {
+    "legio": "0.3.0",
+    "setimmediate": "1.0.2"
+  },
+  "engines": {
+    "node": "*"
+  }
+}
