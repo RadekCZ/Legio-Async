@@ -7,7 +7,7 @@
     "email": "info@razem.cz",
     "url": "http://razem.cz"
   },
-  "licence": "LGPL",
+  "licence": "BSD-3-Clause",
   "repository": {
     "type": "git",
     "url": "https://github.com/RadekCZ/Legio-Async.git"
