@@ -4,6 +4,12 @@ Legio = require("legio"),
 construct = require("legio/construct"),
 Task = require("./task");
 
+/** @module legio-async/promise */
+
+/**
+ * @constructor
+ * @alias module:legio-async/promise
+ */
 var Promise = construct({
   init: function () {
     this.onFulfilledHandlers = [];
@@ -13,12 +19,22 @@ var Promise = construct({
     this.promises = [];
   },
 
+  /** @lends module:legio-async/promise.prototype */
   proto: {
+    /** @type {Boolean} */
     pending: true,
+    /** @type {Thenable} */
     awaiting: null,
+    /** @type {Boolean} */
     fulfilled: false,
+    /** @type {Boolean} */
     rejected: false,
 
+    /**
+     * @param {Function} [onFulfilled]
+     * @param {Function} [onRejected]
+     * @returns {Promise}
+     */
     then: function (onFulfilled, onRejected) {
       var prom = new Promise();
 
@@ -55,13 +71,26 @@ var Promise = construct({
       return prom;
     },
 
+    /**
+     * @param {Function} onRejected
+     * @returns {Promise}
+     */
     failed: function (handler) {
       return this.then(null, handler);
     },
+
+    /**
+     * @param {Function} onSettled
+     * @returns {Promise}
+     */
     settled: function (handler) {
       return this.then(handler, handler);
     },
 
+    /**
+     * @param {Function} onNotified
+     * @returns {this}
+     */
     notified: function (onNotified) {
       if (Function.is(onNotified) && this.pending) {
         this.onNotifiedHandlers.push(onNotified);
@@ -70,6 +99,10 @@ var Promise = construct({
       return this;
     },
 
+    /**
+     * @param {*} value
+     * @returns {Boolean} A boolean indicating whether the promise was fulfilled.
+     */
     fulfill: function (val) {
       if (this.pending && !this.awaiting) {
         this.pending = false;
@@ -84,6 +117,10 @@ var Promise = construct({
       return false;
     },
 
+    /**
+     * @param {*} reason
+     * @returns {Boolean} A boolean indicating whether the promise was rejected.
+     */
     reject: function (val) {
       if (this.pending && !this.awaiting) {
         this.pending = false;
@@ -122,6 +159,9 @@ var Promise = construct({
       );
     },
 
+    /**
+     * @param {*} x
+     */
     resolve: function (val) {
       if (this.awaiting) {
         return;
@@ -138,7 +178,7 @@ var Promise = construct({
           return;
         }
 
-        if ((Object.is(val) || Function.is(val))) {
+        if ((Object.isAny(val) || Function.is(val))) {
           try {
             var then = val.then;
             if (Function.is(then)) {
@@ -159,6 +199,10 @@ var Promise = construct({
       this.fulfill(val);
     },
 
+    /**
+     * @param {*} value
+     * @returns {Boolean} A boolean indicating whether the promise was notified.
+     */
     notify: function (val) {
       if (this.pending) {
         this.emitEvent(this.onNotifiedHandlers, val, true);
@@ -168,15 +212,30 @@ var Promise = construct({
       return false;
     },
 
+    /**
+     * @returns {Function}
+     */
     bindFulfill: function () {
       return this.fulfill.bindList(this, arguments);
     },
+
+    /**
+     * @returns {Function}
+     */
     bindReject: function () {
       return this.reject.bindList(this, arguments);
     },
+
+    /**
+     * @returns {Function}
+     */
     bindResolve: function () {
       return this.resolve.bindList(this, arguments);
     },
+
+    /**
+     * @returns {Function}
+     */
     bindNotify: function () {
       return this.notify.bindList(this, arguments);
     },
@@ -214,14 +273,25 @@ var Promise = construct({
       delete this.promises;
     },
 
+    /**
+     * @param {Function} fn A function in the node-async-style form (err, res)
+     * @returns {Promise}
+     */
     nodeifyThen: function (fn) {
       return this.then(
         function (val) {
           fn(null, val);
         },
-        fn
+        function (err) {
+          fn(err);
+        }
       );
     },
+
+    /**
+     * Returns a function in the node-async-style form which when called resolves the promise
+     * @returns {Function}
+     */
     nodeifyResolve: function () {
       var self = this;
       return function (err, res) {
@@ -235,7 +305,12 @@ var Promise = construct({
     }
   },
 
+  /** @lends module:legio-async/promise */
   own: {
+    /**
+     * @param {Promise[]} list
+     * @returns {Promise}
+     */
     all: function (list, awaitResolution) {
       var
       wrapper = new Promise(),
@@ -289,10 +364,19 @@ var Promise = construct({
 
       return wrapper;
     },
+
+    /**
+     * @param {Promise[]} list
+     * @returns {Promise}
+     */
     allSettled: function (list) {
       return Promise.all(list, true);
     },
 
+    /**
+     * @param {Thenable} thenable
+     * @returns {Promise}
+     */
     when: function (thenable) {
       var prom = new Promise();
 
@@ -305,8 +389,25 @@ var Promise = construct({
 
 var PromiseProto = Promise.prototype;
 
+/**
+ * Alias for {@link module:legio-async/promise#then}
+ * @alias module:legio-async/promise#done
+ * @function
+ */
 PromiseProto.done = PromiseProto.then;
+
+/**
+ * Alias for {@link module:legio-async/promise#failed}
+ * @alias module:legio-async/promise#catch
+ * @function
+ */
 PromiseProto["catch"] = PromiseProto.failed;
+
+/**
+ * Alias for {@link module:legio-async/promise#settled}
+ * @alias module:legio-async/promise#finally
+ * @function
+ */
 PromiseProto["finally"] = PromiseProto.settled;
 
 module.exports = Promise;

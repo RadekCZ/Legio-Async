@@ -15,8 +15,17 @@
   "main": "./index",
   "bin": {},
   "dependencies": {
-    "legio": "0.3.x",
-    "setimmediate": "1.0.2"
+    "legio": "~0.3.0",
+    "setimmediate": "~1.0.2"
+  },
+  "devDependencies": {
+    "mocha": "~1.21.4",
+    "expect.js": "~0.3.1",
+    "promises-aplus-tests": "~2.0.5"
+  },
+  "scripts": {
+    "test": "npm run test-promises && mocha test/index",
+    "test-promises": "promises-aplus-tests test/promise"
   },
   "engines": {
     "node": "*"
