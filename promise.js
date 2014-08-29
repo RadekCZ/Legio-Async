@@ -16,6 +16,8 @@ var Promise = construct({
     this.onRejectedHandlers = [];
     this.onNotifiedHandlers = [];
 
+    this.changes = [];
+
     this.promises = [];
   },
 
@@ -100,6 +102,25 @@ var Promise = construct({
     },
 
     /**
+     * Runs the given function after the fulfillment with the value as a parameter
+     * and stores the result as a new value.
+     * @param {Function} fn
+     * @returns {this}
+     */
+    run: function (fn) {
+      if (Function.is(fn)) {
+        if (this.pending) {
+          this.changes.push(fn);
+        }
+        else if (this.fulfilled) {
+          this.value = fn(this.value);
+        }
+      }
+
+      return this;
+    },
+
+    /**
      * @param {*} value
      * @returns {Boolean} A boolean indicating whether the promise was fulfilled.
      */
@@ -107,6 +128,13 @@ var Promise = construct({
       if (this.pending && !this.awaiting) {
         this.pending = false;
         this.fulfilled = true;
+
+        for (var i = 0; i < this.changes.length; ++i) {
+          var fn = this.changes[i];
+
+          val = fn(val);
+        }
+
         this.value = val;
 
         this.emitEvent(this.onFulfilledHandlers, val);
@@ -269,6 +297,8 @@ var Promise = construct({
       delete this.onFulfilledHandlers;
       delete this.onRejectedHandlers;
       delete this.onNotifiedHandlers;
+
+      delete this.changes;
 
       delete this.promises;
     },

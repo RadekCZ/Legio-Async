@@ -25,11 +25,24 @@ describe("Async", function () {
 
   describe("denodeify", function () {
     it("wraps a node-async-style function so it can return a promise", function (done) {
-      var promiseFn = Async.denodeify(nodeFn);
+      var promiseFn = Async.denodeify(nodeFn), i = 0;
 
       promiseFn(true)
+        .run(function (val) {
+          expect(val).to.be(true);
+          expect(++i).to.be(1);
+
+          return false;
+        })
+        .run(function (val) {
+          expect(val).to.be(false);
+          expect(++i).to.be(2);
+
+          return true;
+        })
         .then(function (val) {
           expect(val).to.be(true);
+          expect(++i).to.be(3);
 
           var prom = promiseFn(false);
           expect(prom).to.be.a(Promise);
